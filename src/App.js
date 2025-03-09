@@ -11,6 +11,8 @@ function App() {
       <Square size={5}/> 
       <br/>
       <Square size={9}/> 
+      <br/>
+      <Square size={7}/>
     </>
   );
 }
