@@ -5,6 +5,23 @@ export default function Game({size = 3}){
 
     const [xTurn, setXTurn] = useState(true);
 
+    const generateWiningCombinations = ()=>{
+        let combinations = [];
+
+        for(let i=0; i< size; i++){
+            //row
+            combinations.push([...Array(size)].map((_,idx)=>i*size+idx));
+            
+            //column
+            combinations.push([...Array(size)].map((_,idx)=>idx*size+i));
+        }
+        
+
+        return combinations;
+    }
+
+    console.log(generateWiningCombinations());
+
     const handleClick = (index)=>{
         const newBoard = [...board];
         newBoard[index] = xTurn ? 'X' : 'O';
