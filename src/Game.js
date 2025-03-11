@@ -5,6 +5,10 @@ export default function Game({size = 3}){
 
     const [xTurn, setXTurn] = useState(true);
 
+    const [winner, setWinner] = useState(null);
+
+    const [winningLine, setWinningLine] = useState([]);
+
     const generateWiningCombinations = ()=>{
         let combinations = [];
 
@@ -14,19 +18,52 @@ export default function Game({size = 3}){
             
             //column
             combinations.push([...Array(size)].map((_,idx)=>idx*size+i));
+
+            
         }
         
+        //diagonal
+        combinations.push([...Array(size)].map((_, idx)=> idx * size +idx));
+
+        // reverse diagonal
+        combinations.push([...Array(size)].map((_,idx)=>idx*size+size-1-idx));
 
         return combinations;
     }
 
-    console.log(generateWiningCombinations());
+    //console.log(generateWiningCombinations());
+
+    const winningCombinations = generateWiningCombinations();
+
+    const checkWinner = (theBoard)=>{
+        for(let combination of winningCombinations){
+            const[first, ...rest] = combination;
+            if(theBoard[first] && rest.every(index=>theBoard[index]===theBoard[first])){
+                setWinningLine(combination);
+                return theBoard[first];
+            }
+        }
+        return null;
+    }
 
     const handleClick = (index)=>{
+        if(board[index] || winner) {
+            return;
+        }
         const newBoard = [...board];
+        
+        const gameWinner = checkWinner(newBoard);
+
+        setWinner(gameWinner);
         newBoard[index] = xTurn ? 'X' : 'O';
         setBoard(newBoard);
+        
         setXTurn(!xTurn);
+
+        if(!gameWinner && newBoard.every(cell=>cell!==null)){
+            setWinner("Draw");
+        }
+
     };
 
     return(
@@ -39,7 +76,7 @@ export default function Game({size = 3}){
                             (val, idx)=>{
                                 const cIndex = index*size + idx;
                                 return (
-                                    <button className="square" key={cIndex}
+                                    <button className={`square ${winningLine.includes(cIndex)? "winner-highlight" : ""}`} key={cIndex}
                                     onClick={()=>handleClick(cIndex)}>
                                         {val}
                                     </button>
