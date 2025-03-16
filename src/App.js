@@ -8,7 +8,7 @@ import Game from './Game';
 function App() {
   return (
     <>  
-      <Game size={4}/>
+      <Game size={3}/>
       <br/>
       <TicTacToe/> 
       <br/>

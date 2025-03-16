@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-export default function Game({size = 3}){
+export default function Game({defaultSize = 3}){
+
+    const [size, setSize] = useState(defaultSize);   
+
     const [board, setBoard] = useState(Array(size*size).fill(null));
 
     const [xTurn, setXTurn] = useState(true);
@@ -40,7 +43,7 @@ export default function Game({size = 3}){
             const[first, ...rest] = combination;
             if(theBoard[first] && rest.every(index=>theBoard[index]===theBoard[first])){
                 setWinningLine(combination);
-                return theBoard[first];
+                return {player: theBoard[first], line: combination};
             }
         }
         return null;
@@ -51,23 +54,47 @@ export default function Game({size = 3}){
             return;
         }
         const newBoard = [...board];
+
+        newBoard[index] = xTurn ? 'X' : 'O';
         
         const gameWinner = checkWinner(newBoard);
 
-        setWinner(gameWinner);
-        newBoard[index] = xTurn ? 'X' : 'O';
-        setBoard(newBoard);
-        
-        setXTurn(!xTurn);
-
-        if(!gameWinner && newBoard.every(cell=>cell!==null)){
+        if(gameWinner){
+            setWinner(gameWinner.player);
+            setWinningLine(gameWinner.line);
+        } else if(newBoard.every(cell=>cell!==null)){
             setWinner("Draw");
         }
+        
+        
+        
+
+        setBoard(newBoard);
+
+        setXTurn(!xTurn);
 
     };
 
+    const handleSizeChange = (event)=>{
+        const newSize = parseInt(event.target.value, 10);
+
+        if(newSize>=3 && newSize<=10){
+            setSize(newSize);
+            setBoard(Array(newSize*newSize).fill(null));
+            setXTurn(true);
+            setWinner(null);
+            setWinningLine([]);
+        }
+    }
+
     return(
         <>
+        <label>
+            Board Size: 
+            <input type="number" min={3} max={10} value={size}
+            onChange={(event)=>handleSizeChange(event)}/>
+        </label>
+        <br/><br/>
         {
             Array.from({length:size}).map((_, index)=>(
                 <div className="board-row" key={index}>
@@ -88,7 +115,30 @@ export default function Game({size = 3}){
                 </div>
             ))
         }
-        <p>Next Player: {xTurn ? 'X' : 'O'}</p>
+        {/* Display Game Status */}
+        {
+            winner ? (winner==='Draw'?
+                (<p className="draw">Game is a Draw! 🤝</p>)
+                :
+                (<p className="winner">Winner: {winner} 🎉</p>)
+            ) :
+            (<p>Next Player: {xTurn ? 'X' : 'O'}</p>)
+        }
+
+        {/* Restart Button */}
+
+        <button className="reset-button"
+        onClick={()=>{
+                    setBoard(Array(size*size).fill(null));
+                    setXTurn(true);
+                    setWinner(null);
+                    setWinningLine([]);
+                }}
+        >
+            Restart Game 🔄
+        </button>
+        <br/>
+        
         </>
     );
 }
