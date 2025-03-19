@@ -2,11 +2,17 @@
 # Features
 
 ✅ Dynamic NxN board size
+
 ✅ Winning condition (row/column/diagonal check)
+
 ✅ Winning animation (highlight the winning cells)
+
 ✅ Draw/tie condition
+
 ✅ Game reset button
+
 ✅ Board size selection (3x3 to 10x10)
+
 
 # Getting Started with Create React App
 
